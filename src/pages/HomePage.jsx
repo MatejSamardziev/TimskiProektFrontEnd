@@ -1,9 +1,10 @@
-import PageLayout from "../components/PageLayout.jsx";
+import PageLayout, { StyledPageLayout } from "../components/PageLayout.jsx";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import ImgMediaCard from "../components/ImgMediaCard.jsx";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
+import StyledHomePageContentWrapper from "../components/HomePageContentWrapper.jsx";
 
 const HomePage = () => {
   const [user, setUser] = useState(null); // To hold the fetched user data
@@ -29,19 +30,21 @@ const HomePage = () => {
   }, []);
 
   return (
-    <PageLayout>
-      <div>
-        <Typography gutterBottom variant="h5" component="div">
-          Welcome {user?.firstName} {user?.lastName}{" "}
-        </Typography>
-        <Typography variant="body2">Position: {user?.jobTitle}</Typography>
-        <Typography variant="body2">Email: {user?.email}</Typography>
-        <Typography variant="body2">
-          Manager: {user?.manager?.firstName} {user?.manager?.lastName}
-        </Typography>
-      </div>
-      <ImgMediaCard days={user?.vacationDays}></ImgMediaCard>
-    </PageLayout>
+    <StyledPageLayout>
+      <StyledHomePageContentWrapper>
+        <div>
+          <Typography gutterBottom variant="h5" component="div">
+            Welcome {user?.firstName} {user?.lastName}{" "}
+          </Typography>
+          <Typography variant="body2">Position: {user?.jobTitle}</Typography>
+          <Typography variant="body2">Email: {user?.email}</Typography>
+          <Typography variant="body2">
+            Manager: {user?.manager?.firstName} {user?.manager?.lastName}
+          </Typography>
+        </div>
+        <ImgMediaCard days={user?.vacationDays}></ImgMediaCard>
+      </StyledHomePageContentWrapper>
+    </StyledPageLayout>
   );
 };
 

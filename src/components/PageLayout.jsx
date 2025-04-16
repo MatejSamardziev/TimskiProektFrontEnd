@@ -46,7 +46,7 @@ export const StyledPageLayout = styled(PageLayout)`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 10px;
+  gap: 20px;
   min-height: 100vh;
   background-color: #f0f2f5;
 `;

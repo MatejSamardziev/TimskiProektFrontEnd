@@ -24,6 +24,9 @@ const DrawerComponent = ({ open, toggleDrawer }) => {
   const goToRequestPto = () => {
     navigate("/request-pto");
   };
+  const goToManagePto = () => {
+    navigate("/manage-pto");
+  };
 
   const DrawerList = (
     <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
@@ -36,6 +39,11 @@ const DrawerComponent = ({ open, toggleDrawer }) => {
         <ListItem key={"Manage employees"} disablePadding>
           <ListItemButton onClick={goToEmployees}>
             <ListItemText primary={"Manage employees"} />
+          </ListItemButton>
+        </ListItem>
+        <ListItem key={"Manage PTO"} disablePadding>
+          <ListItemButton onClick={goToManagePto}>
+            <ListItemText primary={"Manage PTO"} />
           </ListItemButton>
         </ListItem>
         <ListItem key={"Request paid time off"} disablePadding>

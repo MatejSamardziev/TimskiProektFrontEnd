@@ -9,27 +9,53 @@ import { DataGrid } from "@mui/x-data-grid";
 import EmployeePageContentWrapper from "../components/EmployeePageContentWrapper.jsx";
 import Button from "@mui/material/Button";
 
-const employeesColumns = [
-  { field: "firstName", headerName: "First name", width: 130 },
-  { field: "lastName", headerName: "Last name", width: 130 },
+const handleApprove = (row) => {
+  console.log("Approving:", row);
+  // TODO: call API here if needed
+};
+
+const handleDeny = (row) => {
+  console.log("Denying:", row);
+  // TODO: call API here if needed
+};
+
+const timeOffColumns = [
+  { field: "requestedEmployeeName", headerName: "First Name", width: 130 },
+  { field: "requestedEmployeeLastName", headerName: "Last Name", width: 130 },
+  { field: "startDate", headerName: "Start Date", width: 130 },
+  { field: "endDate", headerName: "End Date", width: 130 },
+  { field: "status", headerName: "Status", width: 130 },
   {
-    field: "jobTitle",
-    headerName: "Job title",
-    width: 90,
-  },
-  {
-    field: "vacationDays",
-    headerName: "Vacation days",
-    sortable: true,
-    type: "number",
-    width: 130,
+    field: "actions",
+    headerName: "Actions",
+    sortable: false,
+    width: 200,
+    renderCell: (params) => (
+      <>
+        <Button
+          variant="text"
+          color="success"
+          onClick={() => handleApprove(params.row)}
+          sx={{ mr: 1 }}
+        >
+          Approve
+        </Button>
+        <Button
+          variant="text"
+          color="error"
+          onClick={() => handleDeny(params.row)}
+        >
+          Deny
+        </Button>
+      </>
+    ),
   },
 ];
 
 const paginationModel = { page: 0, pageSize: 5 };
 
 const EmployeesPage = () => {
-  const [employees, setEmployees] = useState(null);
+  const [timeOffs, setTimeOffs] = useState(null);
   const [isLoading, setIsLoading] = useState(true); // Optional loading state
 
   useEffect(() => {
@@ -44,7 +70,7 @@ const EmployeesPage = () => {
             withCredentials: true,
           }),
         ]);
-        setEmployees(employeesResponse.data);
+
         setTimeOffs(timeOffsResponse.data);
       } catch (error) {
         console.log(error);
@@ -54,15 +80,15 @@ const EmployeesPage = () => {
     fetchData();
   }, []);
 
-  console.log(employees);
+  console.log(timeOffs);
 
   return (
     <StyledPageLayout>
       <EmployeePageContentWrapper>
-        <Paper sx={{ height: 400, width: "100%" }}>
+        <Paper sx={{ height: 400, width: "860px" }}>
           <DataGrid
-            rows={employees ?? []}
-            columns={employeesColumns}
+            rows={timeOffs ?? []}
+            columns={timeOffColumns}
             initialState={{ pagination: { paginationModel } }}
             pageSizeOptions={[5, 10]}
             sx={{ border: 0 }}
