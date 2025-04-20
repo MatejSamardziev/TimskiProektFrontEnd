@@ -4,7 +4,7 @@ import axios from "axios";
 import ImgMediaCard from "../components/ImgMediaCard.jsx";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
-import StyledHomePageContentWrapper from "../components/HomePageContentWrapper.jsx";
+import StyledHomePageContentWrapper from "../components/wrappers/HomePageContentWrapper.jsx";
 
 const HomePage = () => {
   const [user, setUser] = useState(null); // To hold the fetched user data

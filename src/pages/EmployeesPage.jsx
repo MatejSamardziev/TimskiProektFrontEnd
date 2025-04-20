@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Paper } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import EmployeePageContentWrapper from "../components/EmployeePageContentWrapper.jsx";
+import EmployeePageContentWrapper from "../components/wrappers/EmployeePageContentWrapper.jsx";
 import Button from "@mui/material/Button";
 
 const employeesColumns = [

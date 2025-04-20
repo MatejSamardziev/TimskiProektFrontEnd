@@ -1,15 +1,18 @@
 import PageLayout from "../components/PageLayout.jsx";
 import * as React from "react";
-import RequestPtoPageContentWrapper from "../components/RequestPtoPageContentWrapper.jsx";
+import RequestPtoPageContentWrapper from "../components/wrappers/RequestPtoPageContentWrapper.jsx";
 import { DateRangePicker } from "@mui/x-date-pickers-pro/DateRangePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers-pro/LocalizationProvider";
-import dayjs from "dayjs";
+import CheckIcon from "@mui/icons-material/Check";
+
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import Button from "@mui/material/Button";
 import axios from "axios";
+import { Alert } from "@mui/material";
 
 const RequestPtoPage = () => {
   const [selectedDates, setSelectedDates] = React.useState([null, null]);
+  const [showSuccess, setShowSuccess] = React.useState(false);
 
   const handleDateChange = (newValue) => {
     setSelectedDates(newValue);
@@ -20,13 +23,13 @@ const RequestPtoPage = () => {
       const [start, end] = selectedDates;
       const startDate = start.format("YYYY-MM-DD");
       const endDate = end.format("YYYY-MM-DD");
-      console.log(startDate, endDate);
       try {
         await axios.post(
           `http://localhost:8080/time-offs/request-time-off?startDate=${startDate}&endDate=${endDate}`,
           {},
           { withCredentials: true },
         );
+        setShowSuccess(true);
       } catch (error) {
         console.log(error);
       }
@@ -36,6 +39,16 @@ const RequestPtoPage = () => {
   return (
     <PageLayout>
       <RequestPtoPageContentWrapper>
+        {showSuccess && (
+          <Alert
+            icon={<CheckIcon fontSize="inherit" />}
+            variant="filled"
+            severity="success"
+          >
+            PTO request was successful.
+          </Alert>
+        )}
+
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DateRangePicker
             localeText={{ start: "Check-in", end: "Check-out" }}
