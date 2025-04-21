@@ -13,6 +13,8 @@ import { Alert } from "@mui/material";
 const RequestPtoPage = () => {
   const [selectedDates, setSelectedDates] = React.useState([null, null]);
   const [showSuccess, setShowSuccess] = React.useState(false);
+  const [showError, setShowError] = React.useState(false);
+  const [error, setError] = React.useState(null);
 
   const handleDateChange = (newValue) => {
     setSelectedDates(newValue);
@@ -30,8 +32,11 @@ const RequestPtoPage = () => {
           { withCredentials: true },
         );
         setShowSuccess(true);
+        setShowError(false);
       } catch (error) {
-        console.log(error);
+        setError(error.response.data);
+        setShowError(true);
+        setShowSuccess(false);
       }
     }
   };
@@ -46,6 +51,15 @@ const RequestPtoPage = () => {
             severity="success"
           >
             PTO request was successful.
+          </Alert>
+        )}
+        {showError && (
+          <Alert
+            icon={<CheckIcon fontSize="inherit" />}
+            variant="filled"
+            severity="error"
+          >
+            {error}
           </Alert>
         )}
 
