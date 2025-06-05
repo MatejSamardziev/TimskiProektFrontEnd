@@ -10,9 +10,9 @@ import axios from "axios";
 import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers-pro/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import Badge from "@mui/material/Badge";
-import CircleComponent from "../components/CircleComponent.jsx";
 import Legend from "../components/Legend.jsx";
+import { Box, Typography, Paper } from "@mui/material";
+import { motion } from "framer-motion";
 
 function ServerDay(props) {
   const { days = [], day, outsideCurrentMonth, ...other } = props;
@@ -24,8 +24,6 @@ function ServerDay(props) {
   else if (found?.status === "PENDING") color = "orange";
   else if (found?.status === "REJECTED") color = "red";
 
-  console.log(color);
-
   return (
     <PickersDay
       day={day}
@@ -33,7 +31,6 @@ function ServerDay(props) {
       {...other}
       sx={{
         backgroundColor: color || undefined,
-
         "&:hover": {
           backgroundColor: color || undefined,
           opacity: 0.9,
@@ -45,7 +42,6 @@ function ServerDay(props) {
 
 function mapDays(data) {
   let days = [];
-  console.log("aaa");
   data.forEach(({ startDate, endDate, status }) => {
     let current = dayjs(startDate);
     const end = dayjs(endDate);
@@ -70,7 +66,7 @@ const YourCalendarPage = () => {
         "http://localhost:8080/time-offs/find-all-by-employee",
         {
           withCredentials: true,
-        },
+        }
       );
       setTimeOffs(response.data);
       setDays(mapDays(response.data));
@@ -80,17 +76,63 @@ const YourCalendarPage = () => {
 
   return (
     <PageLayout>
-      <Legend></Legend>
+      <Legend />
       <YourCalendarPageContentWrapper>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DateCalendar
-            renderLoading={() => <DayCalendarSkeleton />}
-            slots={{ day: ServerDay }}
-            slotProps={{ day: { days } }}
-          />
-        </LocalizationProvider>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <Box
+            component={Paper}
+            elevation={4}
+            sx={{
+              p: 4,
+              borderRadius: 4,
+              width: "100%",
+              maxWidth: "500px",
+              margin: "0 auto",
+              background: "white",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <Typography
+              variant="h4"
+              gutterBottom
+              sx={{ textAlign: "center", fontWeight: 600, color: "#3f51b5" }}
+            >
+              Your Time Off Calendar
+            </Typography>
+
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <Box sx={{ width: "100%" }}>
+                <DateCalendar
+                  renderLoading={() => <DayCalendarSkeleton />}
+                  slots={{ day: ServerDay }}
+                  slotProps={{ day: { days } }}
+                  sx={{
+                    width: "100%",
+                    backgroundColor: "white",
+                    borderRadius: 2,
+                    p: 2,
+                  }}
+                />
+              </Box>
+            </LocalizationProvider>
+
+            <Typography
+              variant="body1"
+              sx={{ textAlign: "center", mt: 3, fontStyle: "italic" }}
+            >
+              📅 Track your approved, pending, or rejected requests below.
+            </Typography>
+          </Box>
+        </motion.div>
       </YourCalendarPageContentWrapper>
     </PageLayout>
   );
 };
+
 export default YourCalendarPage;

@@ -4,16 +4,17 @@ import ImgMediaCard from "../components/ImgMediaCard.jsx";
 import * as React from "react";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Paper } from "@mui/material";
+import { Paper, Box } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import EmployeePageContentWrapper from "../components/wrappers/EmployeePageContentWrapper.jsx";
 import Button from "@mui/material/Button";
+import { motion } from "framer-motion";
 
 const paginationModel = { page: 0, pageSize: 5 };
 
 const EmployeesPage = () => {
   const [timeOffs, setTimeOffs] = useState(null);
-  const [isLoading, setIsLoading] = useState(true); // Optional loading state
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -44,7 +45,7 @@ const EmployeesPage = () => {
         {},
         { withCredentials: true },
       );
-      fetchData(); // refresh data after successful approve
+      fetchData();
     } catch (err) {
       console.error("Approve failed:", err);
     }
@@ -57,23 +58,23 @@ const EmployeesPage = () => {
         {},
         { withCredentials: true },
       );
-      fetchData(); // refresh data after successful deny
+      fetchData();
     } catch (err) {
       console.error("Deny failed:", err);
     }
   };
 
   const timeOffColumns = [
-    { field: "requestedEmployeeName", headerName: "First Name", width: 130 },
-    { field: "requestedEmployeeLastName", headerName: "Last Name", width: 130 },
-    { field: "startDate", headerName: "Start Date", width: 130 },
-    { field: "endDate", headerName: "End Date", width: 130 },
-    { field: "status", headerName: "Status", width: 130 },
+    { field: "requestedEmployeeName", headerName: "First Name", flex: 1 },
+    { field: "requestedEmployeeLastName", headerName: "Last Name", flex: 1 },
+    { field: "startDate", headerName: "Start Date", flex: 1 },
+    { field: "endDate", headerName: "End Date", flex: 1 },
+    { field: "status", headerName: "Status", flex: 1 },
     {
       field: "actions",
       headerName: "Actions",
       sortable: false,
-      width: 200,
+      flex: 2,
       renderCell: (params) => (
         <>
           <Button
@@ -96,20 +97,62 @@ const EmployeesPage = () => {
     },
   ];
 
-  console.log(timeOffs);
-
   return (
     <StyledPageLayout>
       <EmployeePageContentWrapper>
-        <Paper sx={{ height: 400, width: "860px" }}>
-          <DataGrid
-            rows={timeOffs ?? []}
-            columns={timeOffColumns}
-            initialState={{ pagination: { paginationModel } }}
-            pageSizeOptions={[5, 10]}
-            sx={{ border: 0 }}
-          />
-        </Paper>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <Typography variant="h4" gutterBottom sx={{ fontWeight: 600, textAlign: "center", color: "#3f51b5" }}>
+            PTO Requests Awaiting Your Action
+          </Typography>
+
+          <Box
+            component={Paper}
+            elevation={4}
+            sx={{
+              width: "95%",
+              maxWidth: "1600px",
+              mx: "auto",
+              p: 4,
+              borderRadius: 4,
+              boxShadow: 6,
+              background: "linear-gradient(135deg, #e3f2fd, #fce4ec)",
+            }}
+          >
+            <DataGrid
+              autoHeight
+              rows={timeOffs ?? []}
+              columns={timeOffColumns}
+              initialState={{ pagination: { paginationModel } }}
+              pageSizeOptions={[5, 10]}
+              getRowHeight={() => 75}
+              sx={{
+                border: 0,
+                fontSize: "1rem",
+                backgroundColor: "white",
+                borderRadius: 2,
+              }}
+            />
+
+            <Box sx={{
+              textAlign: "center",
+              mt: 6,
+              py: 3,
+              fontSize: "1.3rem",
+              color: "#6a1b9a",
+              fontWeight: 600,
+              background: "linear-gradient(135deg, #e3f2fd, #fce4ec)",
+              borderRadius: 3,
+              boxShadow: "inset 0 0 6px #ec407a",
+            }}>
+              Here are the holiday requests from employees you manage.
+              You can review, approve, or reject each request below.
+            </Box>
+          </Box>
+        </motion.div>
       </EmployeePageContentWrapper>
     </StyledPageLayout>
   );
