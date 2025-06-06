@@ -118,31 +118,38 @@ const AdminPage = () => {
     }
   };
 
-  const handleEdit = async () => {
-    try {
-      const response = await fetch(`http://localhost:8080/employees/edit/${editingUserId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          firstName: newUser.firstName,
-          lastName: newUser.lastName,
-          jobTitle: newUser.jobTitle,
-          manager: newUser.manager,
-          role: newUser.role == 'EMPLOYEE_BASIC'?'WORKER':newUser.role,
-          vacationDays: newUser.vacationDays
-        }),
-      });
-      if (response.ok) {
-        const updated = await response.json();
-        const updatedUsers = users.map((u) => (u.id === updated.id ? updated : u));
-        setUsers(updatedUsers);
-        handleClose();
-      }
-    } catch (error) {
-      console.error("Failed to edit user:", error);
+ const handleEdit = async () => {
+  try {
+    const response = await fetch(`http://localhost:8080/employees/edit/${editingUserId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        firstName: newUser.firstName,
+        lastName: newUser.lastName,
+        email: newUser.email ?? "",            // Add email if required
+        password: newUser.password ?? "",      // Backend might require this too
+        jobTitle: newUser.jobTitle,
+        salary: newUser.salary ?? 0,           // Add salary field as required
+        manager: newUser.manager,
+        role: newUser.role,
+        vacationDays: newUser.vacationDays ?? 20
+      }),
+    });
+
+    if (response.ok) {
+      const updated = await response.json();
+      const updatedUsers = users.map((u) => (u.id === updated.id ? updated : u));
+      setUsers(updatedUsers);
+      handleClose();
+    } else {
+      console.error("Failed to update user. Server responded with:", response.status);
     }
-  };
+  } catch (error) {
+    console.error("Failed to edit user:", error);
+  }
+};
+
 
   const handleDelete = async (userId) => {
     try {
@@ -179,6 +186,14 @@ const AdminPage = () => {
     });
     setOpen(true);
   };
+  
+const groupedUsers = users.reduce((acc, user) => {
+  const letter = user.firstName.charAt(0).toUpperCase();
+  if (!acc[letter]) acc[letter] = [];
+  acc[letter].push(user);
+  return acc;
+}, {});
+
 
   return (
     <StyledPageLayout>
@@ -199,11 +214,19 @@ const AdminPage = () => {
           </Box>
         </Box>
 
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 6, marginTop: 4 }}>
-          {isLoading ? (
-            <Typography>Loading users...</Typography>
-          ) : (
-            users.map((user) => (
+        <Box sx={{ width: '100%', marginTop: 4 }}>
+  {isLoading ? (
+    <Typography>Loading users...</Typography>
+  ) : (
+    Object.keys(groupedUsers)
+      .sort()
+      .map((letter) => (
+        <Box key={letter} sx={{ width: '100%', mt: 4 }}>
+          <Typography variant="h5" sx={{ fontWeight: 600, mb: 2 }}>
+            {letter}
+          </Typography>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+            {groupedUsers[letter].map((user) => (
               <motion.div
                 key={user.id}
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -229,6 +252,11 @@ const AdminPage = () => {
                       <Divider className="my-3" />
                       <Typography variant="body2" gutterBottom><strong>Job Title:</strong> {user.jobTitle}</Typography>
                       <Typography variant="body2" gutterBottom><strong>Vacation Days:</strong> {user.vacationDays}</Typography>
+                      {user.managerFirstName && user.managerLastName && (
+                        <Typography variant="body2" gutterBottom>
+                          <strong>Managed by:</strong> {user.managerFirstName} {user.managerLastName}
+                        </Typography>
+                      )}
                       {user.role && (
                         <Chip label={user.role === "EMPLOYEE_BASIC" ? "WORKER" : user.role} color={getRoleColor(user.role)} variant="outlined" size="small" className="mt-2" />
                       )}
@@ -240,9 +268,13 @@ const AdminPage = () => {
                   </CardContent>
                 </Card>
               </motion.div>
-            ))
-          )}
+            ))}
+          </Box>
         </Box>
+      ))
+  )}
+</Box>
+
 
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
           <DialogTitle sx={{ backgroundColor: '#1976d2', color: 'white', textAlign: 'center' }}>{editMode ? "Edit User" : "Create New User"}</DialogTitle>

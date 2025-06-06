@@ -63,25 +63,28 @@ const EmployeesPage = () => {
       console.error("Deny failed:", err);
     }
   };
+const timeOffColumns = [
+  { field: "requestedEmployeeName", headerName: "First Name", flex: 1 },
+  { field: "requestedEmployeeLastName", headerName: "Last Name", flex: 1 },
+  { field: "startDate", headerName: "Start Date", flex: 1 },
+  { field: "endDate", headerName: "End Date", flex: 1 },
+  { field: "status", headerName: "Status", flex: 1 },
+  {
+    field: "actions",
+    headerName: "Actions",
+    sortable: false,
+    flex: 2,
+    renderCell: (params) => {
+      const status = params.row.status?.toLowerCase();
 
-  const timeOffColumns = [
-    { field: "requestedEmployeeName", headerName: "First Name", flex: 1 },
-    { field: "requestedEmployeeLastName", headerName: "Last Name", flex: 1 },
-    { field: "startDate", headerName: "Start Date", flex: 1 },
-    { field: "endDate", headerName: "End Date", flex: 1 },
-    { field: "status", headerName: "Status", flex: 1 },
-    {
-      field: "actions",
-      headerName: "Actions",
-      sortable: false,
-      flex: 2,
-      renderCell: (params) => (
+      return (
         <>
           <Button
             variant="text"
             color="success"
             onClick={() => handleApprove(params.row)}
             sx={{ mr: 1 }}
+            disabled={status === "approved"} // Disable if already approved
           >
             Approve
           </Button>
@@ -89,53 +92,67 @@ const EmployeesPage = () => {
             variant="text"
             color="error"
             onClick={() => handleDeny(params.row)}
+            disabled={status === "rejected"} // Disable if already rejected
           >
             Deny
           </Button>
         </>
-      ),
+      );
     },
-  ];
+  },
+]; // ← this closing bracket was missing
 
   return (
     <StyledPageLayout>
       <EmployeePageContentWrapper>
-        <motion.div
+        <div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <Typography variant="h4" gutterBottom sx={{ fontWeight: 600, textAlign: "center", color: "#3f51b5" }}>
-            PTO Requests Awaiting Your Action
-          </Typography>
+          <Typography
+  variant="h4"
+  gutterBottom
+  sx={{
+    mt: 6,
+    fontWeight: 600,
+    textAlign: "center",
+    color: "#3f51b5",
+  }}
+>
+  PTO Requests Awaiting Your Action
+</Typography>
+
 
           <Box
-            component={Paper}
-            elevation={4}
-            sx={{
-              width: "95%",
-              maxWidth: "1600px",
-              mx: "auto",
-              p: 4,
-              borderRadius: 4,
-              boxShadow: 6,
-              background: "linear-gradient(135deg, #e3f2fd, #fce4ec)",
-            }}
-          >
-            <DataGrid
-              autoHeight
-              rows={timeOffs ?? []}
-              columns={timeOffColumns}
-              initialState={{ pagination: { paginationModel } }}
-              pageSizeOptions={[5, 10]}
-              getRowHeight={() => 75}
-              sx={{
-                border: 0,
-                fontSize: "1rem",
-                backgroundColor: "white",
-                borderRadius: 2,
-              }}
-            />
+  component={Paper}
+  elevation={4}
+  sx={{
+    width: "1200px",        // Fixed width
+    height: "700px",        // Fixed height
+    margin: "40px auto",    // Centered with spacing from top
+    padding: 4,
+    borderRadius: 4,
+    boxShadow: 6,
+    background: "linear-gradient(135deg, #e3f2fd, #fce4ec)",
+    overflow: "hidden",     // Prevents inner overflow issues
+  }}
+>
+           <DataGrid
+  rows={timeOffs ?? []}
+  columns={timeOffColumns}
+  initialState={{ pagination: { paginationModel } }}
+  pageSizeOptions={[5, 10]}
+  getRowHeight={() => 75}
+  sx={{
+    border: 0,
+    fontSize: "1rem",
+    backgroundColor: "white",
+    borderRadius: 2,
+    height: "100%",   // Fill the container
+    width: "100%",    // Fill the container
+  }}
+/>
 
             <Box sx={{
               textAlign: "center",
@@ -152,7 +169,7 @@ const EmployeesPage = () => {
               You can review, approve, or reject each request below.
             </Box>
           </Box>
-        </motion.div>
+        </div>
       </EmployeePageContentWrapper>
     </StyledPageLayout>
   );
