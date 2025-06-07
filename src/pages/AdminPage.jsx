@@ -51,7 +51,7 @@ const AdminPage = () => {
         });
         const data = await response.json();
         setUsers(data);
-        const managers = data.filter((u) => u.role === "MANAGER" || u.role === "ADMIN");
+        const managers = data.filter((u) => u.role === "MANAGER");
         setManagerOptions(managers);
         setNewUser((prev) => ({
           ...prev,
@@ -127,13 +127,10 @@ const AdminPage = () => {
       body: JSON.stringify({
         firstName: newUser.firstName,
         lastName: newUser.lastName,
-        email: newUser.email ?? "",            // Add email if required
-        password: newUser.password ?? "",      // Backend might require this too
         jobTitle: newUser.jobTitle,
-        salary: newUser.salary ?? 0,           // Add salary field as required
         manager: newUser.manager,
         role: newUser.role,
-        vacationDays: newUser.vacationDays ?? 20
+        vacationDays: newUser.vacationDays
       }),
     });
 
@@ -142,8 +139,6 @@ const AdminPage = () => {
       const updatedUsers = users.map((u) => (u.id === updated.id ? updated : u));
       setUsers(updatedUsers);
       handleClose();
-    } else {
-      console.error("Failed to update user. Server responded with:", response.status);
     }
   } catch (error) {
     console.error("Failed to edit user:", error);
