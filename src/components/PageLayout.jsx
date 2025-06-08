@@ -4,9 +4,21 @@ import { Button, IconButton, Toolbar, Typography } from "@mui/material";
 import { useState } from "react";
 import DrawerComponent from "./DrawerComponent.jsx";
 import MenuIcon from "@mui/icons-material/Menu";
+import axios from "axios";
 
 const PageLayout = ({ className, children }) => {
   const [open, setOpen] = useState(false);
+
+    const handleLogout = async () => {
+        try {
+            await axios.post("http://localhost:8080/logout", {}, {
+                withCredentials: true, // Needed to send session cookie
+            });
+            window.location.href = "http://localhost:8080/login";
+        } catch (error) {
+            console.error("Logout failed:", error);
+        }
+    };
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
@@ -30,7 +42,7 @@ const PageLayout = ({ className, children }) => {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Leave Management App
           </Typography>
-          <Button color="inherit">Logout</Button>
+          <Button onClick={handleLogout} color="inherit">Logout</Button>
         </Toolbar>
       </AppBar>
       <div>{children}</div>

@@ -6,26 +6,12 @@ import * as React from "react";
 import StyledHomePageContentWrapper from "../components/wrappers/HomePageContentWrapper.jsx";
 import { Link } from "react-router-dom";
 import { Button, Grid, Paper, Avatar, Divider, Box } from "@mui/material";
+import {useUser} from "../context/UserContext.jsx";
 
 const HomePage = () => {
-  const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const {user , isLoading} = useUser();
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      setIsLoading(true);
-      try {
-        const response = await axios.get("http://localhost:8080/employees/current-user", {
-          withCredentials: true,
-        });
-        setUser(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-      setIsLoading(false);
-    };
-    fetchUser();
-  }, []);
+
 
   return (
     <StyledPageLayout>
@@ -118,7 +104,7 @@ const HomePage = () => {
 
 
           <Grid item xs={12} sm={4}>
-            <Link to="/chat-colleagues" style={{ textDecoration: "none" }}>
+              <a href="http://localhost:8081/login" style={{ textDecoration: "none" }}>
               <Paper
                 elevation={3}
                 sx={{
@@ -134,7 +120,7 @@ const HomePage = () => {
                   Chat with Colleagues
                 </Typography>
               </Paper>
-            </Link>
+            </a>
           </Grid>
         </Grid>
       </StyledHomePageContentWrapper>
